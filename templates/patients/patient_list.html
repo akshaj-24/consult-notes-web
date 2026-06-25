@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+
+{% block title %}Patients{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <div class="eyebrow">Patient Dataset</div>
+            <h1 class="h3 mb-1">Patients</h1>
+            <p class="text-secondary mb-0">Dataset records and manually created/copy-edited patients live here.</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <form method="post" action="{% url 'core:import_patient_seed' %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{% url 'patients:list' %}">
+                <button type="submit" class="btn btn-outline-secondary">Import Seed CSV</button>
+            </form>
+            <a class="btn btn-outline-secondary" href="{% url 'patients:random' %}">Open Random Patient</a>
+            <a class="btn btn-primary" href="{% url 'patients:create' %}">Create Patient</a>
+        </div>
+    </div>
+    <form method="get" class="card card-body shadow-sm border-0 mb-3">
+        <div class="row g-2 align-items-end">
+            <div class="col-md-8">
+                <label class="form-label" for="q">Search</label>
+                <input class="form-control" type="text" id="q" name="q" value="{{ query }}" placeholder="Search by patient name, MRN, site, or disease setting">
+            </div>
+            <div class="col-md-4 d-grid">
+                <button type="submit" class="btn btn-outline-primary">Search</button>
+            </div>
+        </div>
+    </form>
+    <div class="card app-card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr><th>Patient</th><th>MRN</th><th>Site</th><th>Disease Setting</th><th>Consult Date</th><th></th></tr>
+                </thead>
+                <tbody>
+                    {% for patient in patients %}
+                        <tr>
+                            <td>
+                                <div class="fw-semibold">{{ patient.patient_name }}</div>
+                                <div class="small text-secondary">{{ patient.source_type|title }}</div>
+                            </td>
+                            <td>{{ patient.mrn }}</td>
+                            <td>{{ patient.cancer_site|default:'-' }}</td>
+                            <td>{{ patient.disease_setting|default:'-' }}</td>
+                            <td>{{ patient.consult_date|default:'-' }}</td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'patients:detail' patient.pk %}">Open</a>
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'patients:copy' patient.pk %}">Copy</a>
+                                    {% if request.user.is_superuser %}
+                                        <form method="post" action="{% url 'patients:delete' patient.pk %}" onsubmit="return confirm('Delete this patient and related consult notes?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr><td colspan="6" class="text-center py-4 text-secondary">No patients found yet.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

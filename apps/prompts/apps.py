@@ -1,0 +1,10 @@
+from django.apps import AppConfig
+
+
+class PromptsConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'apps.prompts'
+    verbose_name = 'Prompts'
+
+    def ready(self) -> None:
+        from . import signals  # noqa: F401

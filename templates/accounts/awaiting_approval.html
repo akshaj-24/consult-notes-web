@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Awaiting Approval{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-7">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-5 text-center">
+                    <h1 class="h3 mb-3">Awaiting administrator approval</h1>
+                    <p class="text-secondary mb-4">
+                        You are signed in, but your account is not approved yet. Once an administrator approves your account in Django admin, this page will redirect you back into the app.
+                    </p>
+                    <form method="post" action="{% url 'accounts:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-primary">Sign out</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

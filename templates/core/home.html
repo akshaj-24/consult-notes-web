@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Consult Notes{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="card app-card shadow-sm border-0 hero-card">
+                <div class="card-body p-5 p-lg-6">
+                    <div class="eyebrow">Internal Oncology Workspace</div>
+                    <h1 class="display-6 mb-3">Consult drafting without the clutter</h1>
+                    <p class="lead text-secondary mb-4">Build consult notes from structured patient data, reusable prompts, format profiles, and stored generation settings in one focused workflow.</p>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a class="btn btn-primary" href="{% url 'accounts:login' %}">Log in</a>
+                        <a class="btn btn-outline-primary" href="{% url 'accounts:signup' %}">Create account</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

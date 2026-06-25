@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-6">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h1 class="h3 mb-4">Create account</h1>
+                    <p class="text-secondary">New accounts require administrator approval before the rest of the application becomes available.</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% include 'partials/form_fields.html' with form=form %}
+                        <button type="submit" class="btn btn-primary w-100">Create account</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

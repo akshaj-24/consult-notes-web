@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <div class="eyebrow">Workspace Overview</div>
+            <h1 class="h3 mb-1">Dashboard</h1>
+            <p class="text-secondary mb-0">Use the bundled seed data and the dummy note flow while AWS integration is disabled.</p>
+        </div>
+        <a class="btn btn-primary" href="{% url 'generation:start' %}">Start New Generation</a>
+    </div>
+
+    <div class="row g-3 mb-4">
+        {% for label, value in counts.items %}
+            <div class="col-6 col-lg-2">
+                <div class="card app-card metric-card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="text-secondary small text-uppercase">{{ label }}</div>
+                        <div class="display-6">{{ value }}</div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card app-card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h2 class="h5">Quick Links</h2>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        <a class="btn btn-outline-primary" href="{% url 'patients:list' %}">Browse Patients</a>
+                        <a class="btn btn-outline-primary" href="{% url 'prompts:list' %}">Manage Prompts</a>
+                        <a class="btn btn-outline-primary" href="{% url 'formats:list' %}">Manage Formats</a>
+                        <a class="btn btn-outline-primary" href="{% url 'consults:list' %}">Review Consults</a>
+                    </div>
+                    <div class="d-flex flex-wrap gap-2">
+                        <form method="post" action="{% url 'core:import_patient_seed' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'core:dashboard' %}">
+                            <button type="submit" class="btn btn-outline-secondary">Import Bundled Patient Seed</button>
+                        </form>
+                        <form method="post" action="{% url 'core:refresh_model_catalog' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="next" value="{% url 'core:dashboard' %}">
+                            <button type="submit" class="btn btn-outline-secondary">Refresh Model Catalog</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card app-card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h2 class="h5">Recent Notes</h2>
+                    {% if latest_notes %}
+                        <div class="list-group list-group-flush">
+                            {% for note in latest_notes %}
+                                <a class="list-group-item list-group-item-action px-0" href="{% url 'consults:detail' note.pk %}">
+                                    <div class="fw-semibold">{{ note.title }}</div>
+                                    <div class="small text-secondary">{{ note.patient.patient_name }} · {{ note.get_status_display }}</div>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-secondary mb-0">No consult notes yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

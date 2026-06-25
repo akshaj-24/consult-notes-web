@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+
+{% block title %}Generation Step 2{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center"><div class="col-xl-9"><div class="card shadow-sm border-0"><div class="card-body p-4 p-lg-5"><h1 class="h3 mb-2">Generation Step 2: Settings</h1><p class="text-secondary mb-4">Selected patient: <strong>{{ session.selected_patient.patient_name }}</strong>{% if session.selected_patient %}<a class="ms-2" href="{% url 'generation:patient' session.pk %}">Change patient</a>{% endif %}</p><form method="post">{% csrf_token %}{% include 'partials/form_fields.html' with form=form %}<div class="d-flex gap-2 flex-wrap mt-4"><button type="submit" class="btn btn-primary">Continue to Summary</button><a class="btn btn-outline-secondary" href="{% url 'prompts:list' %}">Manage Prompts</a><a class="btn btn-outline-secondary" href="{% url 'formats:list' %}">Manage Formats</a></div></form></div></div></div></div>
+{% endblock %}

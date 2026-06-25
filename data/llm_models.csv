@@ -1,0 +1,2 @@
+provider,model_key,display_name,is_active,supports_temperature,supports_top_p,supports_max_tokens,supports_system_prompt,supports_streaming,sort_order
+local,dummy-sample-note,Dummy Sample Note Generator,True,True,True,True,True,False,1

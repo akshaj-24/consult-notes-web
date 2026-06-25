@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Prompts{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+        <div>
+            <div class="eyebrow">Prompt Library</div>
+            <h1 class="h3 mb-1">Prompts</h1>
+            <p class="text-secondary mb-0">One active prompt per type is enforced, but you can still select inactive prompts during generation.</p>
+        </div>
+        <a class="btn btn-primary" href="{% url 'prompts:create' %}">Create Prompt</a>
+    </div>
+    <div class="card app-card shadow-sm border-0">
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        {% if request.user.is_superuser %}<th>Owner</th>{% endif %}
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for prompt in prompts %}
+                        <tr>
+                            <td>{{ prompt.name }}</td>
+                            <td>{{ prompt.get_prompt_type_display }}</td>
+                            {% if request.user.is_superuser %}<td>{{ prompt.user.username }}</td>{% endif %}
+                            <td>{{ prompt.description|default:'-' }}</td>
+                            <td>
+                                {% if prompt.is_active %}
+                                    <span class="badge text-bg-success">Active</span>
+                                {% else %}
+                                    <span class="badge text-bg-secondary">Inactive</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'prompts:edit' prompt.pk %}">Edit</a>
+                                    <a class="btn btn-outline-secondary btn-sm" href="{% url 'prompts:copy' prompt.pk %}">Copy</a>
+                                    {% if prompt.user_id == request.user.id %}
+                                        <form method="post" action="{% url 'prompts:activate' prompt.pk %}">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">Make Active</button>
+                                        </form>
+                                    {% endif %}
+                                    {% if request.user.is_superuser %}
+                                        <form method="post" action="{% url 'prompts:delete' prompt.pk %}" onsubmit="return confirm('Delete this prompt?');">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ patient.patient_name }}{% endblock %}
+
+{% block content %}
+    <div class="page-header d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <div>
+            <div class="eyebrow">Patient Profile</div>
+            <h1 class="h3 mb-1">{{ patient.patient_name }}</h1>
+            <p class="text-secondary mb-0">MRN {{ patient.mrn }} · {{ patient.cancer_site|default:'Cancer site not set' }}</p>
+        </div>
+        <div class="d-flex gap-2 flex-wrap">
+            <a class="btn btn-outline-secondary" href="{% url 'patients:edit' patient.pk %}">Edit</a>
+            <a class="btn btn-outline-secondary" href="{% url 'patients:copy' patient.pk %}">Copy to New Record</a>
+            <a class="btn btn-primary" href="{% url 'generation:start' %}">Start Generation</a>
+            {% if request.user.is_superuser %}
+                <form method="post" action="{% url 'patients:delete' patient.pk %}" onsubmit="return confirm('Delete this patient and related consult notes?');">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-outline-danger">Delete</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row g-4">
+        {% for title, rows in sections %}
+            <div class="col-lg-6">
+                <div class="card app-card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <h2 class="h5">{{ title }}</h2>
+                        <dl class="row mb-0 small-detail-list">
+                            {% for label, value in rows %}
+                                <dt class="col-sm-5 text-secondary">{{ label }}</dt>
+                                <dd class="col-sm-7">{{ value|linebreaksbr }}</dd>
+                            {% endfor %}
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
